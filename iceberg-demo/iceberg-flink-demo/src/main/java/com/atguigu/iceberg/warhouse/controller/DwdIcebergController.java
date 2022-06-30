@@ -14,9 +14,12 @@ public class DwdIcebergController {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();
         dwdIcebergSerivce = new DwdIcebergSerivce();
 
-        //测试数据存放路径
+        // 测试数据存放路径,需要把测试数据下面的数据全部拷贝到/tmp/warehouse/ods/下面；
         String basePath = "file:///tmp/warehouse/ods/";
+
+        //使用Hadoop本地路径，Icerberg数据保存到/tmp/warehouse/iceberg/iceberg/；
         String catalogPath = "file:///tmp/warehouse/iceberg/iceberg/";
+
         dwdIcebergSerivce.readOdsData(env, basePath, catalogPath);
         env.execute();
     }
