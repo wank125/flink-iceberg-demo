@@ -13,14 +13,16 @@ import static org.apache.flink.table.api.Expressions.$;
 
 public class DwsIcbergDao {
 
+    private String catalogPath = "file:///tmp/warehouse/iceberg/iceberg/";
+
     public Table queryDwsMemberData(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dws_member");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "dws_member");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result).select($("uid"), $("ad_id"), $("memberlevel"),
                 $("register"), $("appregurl"), $("regsource"), $("regsourcename"),
-                $("adname"),$("sitename"),$("vip_level"),$("paymoney").cast(DataTypes.DECIMAL(10,4)).as("paymoney"),
-                $("dt"),$("dn"));
+                $("adname"), $("sitename"), $("vip_level"), $("paymoney").cast(DataTypes.DECIMAL(10, 4)).as("paymoney"),
+                $("dt"), $("dn"));
 
-      return table;
+        return table;
     }
 }

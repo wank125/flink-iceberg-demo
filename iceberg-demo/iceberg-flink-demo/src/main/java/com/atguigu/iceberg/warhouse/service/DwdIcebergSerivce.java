@@ -15,9 +15,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DwdIcebergSerivce {
-    public void readOdsData(StreamExecutionEnvironment env) {
 
-        DataStream<String> baseadDS = env.readTextFile("hdfs://mycluster/ods/baseadlog.log");
+    //basePath= file:///tmp/warehouse/ods/
+    //catalogPath=file:///tmp/warehouse/iceberg/iceberg/
+    public void readOdsData(StreamExecutionEnvironment env, String basePath, String catalogPath) {
+
+        DataStream<String> baseadDS = env.readTextFile(basePath + "baseadlog.log");
         DataStream<RowData> baseadInput = baseadDS.map(item -> {
             JSONObject jsonObject = JSONObject.parseObject(item);
             GenericRowData rowData = new GenericRowData(3);
@@ -26,11 +29,11 @@ public class DwdIcebergSerivce {
             rowData.setField(2, StringData.fromString(jsonObject.getString("dn")));
             return rowData;
         });
-        TableLoader dwdbaseadTable = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_base_ad");
+        TableLoader dwdbaseadTable = TableLoader.fromHadoopTable(catalogPath + "dwd_base_ad");
         FlinkSink.forRowData(baseadInput).tableLoader(dwdbaseadTable).overwrite(true).build();
 
 
-        DataStream<String> basewebsiteDS = env.readTextFile("hdfs://mycluster/ods/baswewebsite.log");
+        DataStream<String> basewebsiteDS = env.readTextFile(basePath + "baswewebsite.log");
         DataStream<RowData> basewebsiteInput = basewebsiteDS.map(item -> {
             JSONObject jsonObject = JSONObject.parseObject(item);
             GenericRowData rowData = new GenericRowData(7);
@@ -45,11 +48,11 @@ public class DwdIcebergSerivce {
             rowData.setField(6, StringData.fromString(jsonObject.getString("dn")));
             return rowData;
         });
-        TableLoader dwdbasewebsiteTable = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_base_website");
+        TableLoader dwdbasewebsiteTable = TableLoader.fromHadoopTable(catalogPath + "dwd_base_website");
         FlinkSink.forRowData(basewebsiteInput).tableLoader(dwdbasewebsiteTable).overwrite(true).build();
 
 
-        DataStream<String> memberDS = env.readTextFile("hdfs://mycluster/ods/member.log");
+        DataStream<String> memberDS = env.readTextFile(basePath + "member.log");
         DataStream<RowData> memberInput = memberDS.map(item -> {
             JSONObject jsonObject = JSONObject.parseObject(item);
             GenericRowData rowData = new GenericRowData(19);
@@ -74,11 +77,11 @@ public class DwdIcebergSerivce {
             rowData.setField(18, StringData.fromString(jsonObject.getString("dt")));
             return rowData;
         });
-        TableLoader dwdmemberTable = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_member");
+        TableLoader dwdmemberTable = TableLoader.fromHadoopTable(catalogPath + "dwd_member");
         FlinkSink.forRowData(memberInput).tableLoader(dwdmemberTable).overwrite(true).build();
 
 
-        DataStream<String> memberregtypDS = env.readTextFile("hdfs://mycluster/ods/memberRegtype.log");
+        DataStream<String> memberregtypDS = env.readTextFile(basePath + "memberRegtype.log");
         DataStream<RowData> memberregtypInput = memberregtypDS.map(item -> {
             JSONObject jsonObject = JSONObject.parseObject(item);
             GenericRowData rowData = new GenericRowData(10);
@@ -96,10 +99,10 @@ public class DwdIcebergSerivce {
             rowData.setField(9, StringData.fromString(jsonObject.getString("dt")));
             return rowData;
         });
-        TableLoader dwdmemberregtypeTable = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_member_regtype");
+        TableLoader dwdmemberregtypeTable = TableLoader.fromHadoopTable(catalogPath + "dwd_member_regtype");
         FlinkSink.forRowData(memberregtypInput).tableLoader(dwdmemberregtypeTable).overwrite(true).build();
 
-        DataStream<String> memviplevelDS = env.readTextFile("hdfs://mycluster/ods/pcenterMemViplevel.log");
+        DataStream<String> memviplevelDS = env.readTextFile(basePath + "pcenterMemViplevel.log");
         DataStream<RowData> memviplevelInput = memviplevelDS.map(item -> {
             JSONObject jsonObject = JSONObject.parseObject(item);
             GenericRowData rowData = new GenericRowData(10);
@@ -121,10 +124,10 @@ public class DwdIcebergSerivce {
             rowData.setField(9, StringData.fromString(jsonObject.getString("dn")));
             return rowData;
         });
-        TableLoader dwdviplevelTable = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_vip_level");
+        TableLoader dwdviplevelTable = TableLoader.fromHadoopTable(catalogPath + "dwd_vip_level");
         FlinkSink.forRowData(memviplevelInput).tableLoader(dwdviplevelTable).overwrite(true).build();
 
-        DataStream<String> mempaymoneyDS = env.readTextFile("hdfs://mycluster/ods/pcentermempaymoney.log");
+        DataStream<String> mempaymoneyDS = env.readTextFile(basePath + "pcentermempaymoney.log");
         DataStream<RowData> mempaymoneyInput = mempaymoneyDS.map(item -> {
             JSONObject jsonObject = JSONObject.parseObject(item);
             GenericRowData rowData = new GenericRowData(6);
@@ -136,7 +139,7 @@ public class DwdIcebergSerivce {
             rowData.setField(5, StringData.fromString(jsonObject.getString("dn")));
             return rowData;
         });
-        TableLoader dwdmempaymoneyTable = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_pcentermempaymoney");
+        TableLoader dwdmempaymoneyTable = TableLoader.fromHadoopTable(catalogPath + "dwd_pcentermempaymoney");
         FlinkSink.forRowData(mempaymoneyInput).tableLoader(dwdmempaymoneyTable).overwrite(true).build();
 
 
