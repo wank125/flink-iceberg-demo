@@ -1,0 +1,6 @@
+测试数据/member.log filter=lfs diff=lfs merge=lfs -text
+测试数据/memberRegtype.log filter=lfs diff=lfs merge=lfs -text
+测试数据/pcenterMemViplevel.log filter=lfs diff=lfs merge=lfs -text
+测试数据/pcentermempaymoney.log filter=lfs diff=lfs merge=lfs -text
+测试数据/baseadlog.log filter=lfs diff=lfs merge=lfs -text
+测试数据/baswewebsite.log filter=lfs diff=lfs merge=lfs -text

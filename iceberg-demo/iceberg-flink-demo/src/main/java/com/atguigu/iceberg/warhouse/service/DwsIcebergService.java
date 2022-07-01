@@ -13,8 +13,13 @@ import org.apache.iceberg.flink.sink.FlinkSink;
 
 import static org.apache.flink.table.api.Expressions.$;
 
+/**
+ * 宽表Join
+ */
 public class DwsIcebergService {
-    DwdIcebergDao dwdIcebergDao;
+
+    private String catalogPath = "file:///tmp/warehouse/iceberg/iceberg/";
+    private DwdIcebergDao dwdIcebergDao;
 
     public void getDwsMemberData(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv, String dt) {
         dwdIcebergDao = new DwdIcebergDao();
@@ -26,7 +31,7 @@ public class DwsIcebergService {
         Table dwdBaseAd = dwdIcebergDao.getDwdBaseAd(env, tableEnv);
 
         Table result = dwdMember.dropColumns($("paymoney")).leftOuterJoin(dwdMemberRegtype.renameColumns($("uid").as("reg_uid")).dropColumns($("dt")),
-                $("uid").isEqual($("reg_uid")))
+                        $("uid").isEqual($("reg_uid")))
                 .leftOuterJoin(dwdPcentermempaymoney.renameColumns($("uid").as("pcen_uid")).dropColumns($("dt")),
                         $("uid").isEqual($("pcen_uid")))
                 .leftOuterJoin(dwdBaseAd.renameColumns($("dn").as("basead_dn")),
@@ -46,7 +51,7 @@ public class DwsIcebergService {
         DataStream<Tuple2<Boolean, RowData>> tuple2DataStream = tableEnv.toRetractStream(result, RowData.class);
         DataStream<RowData> resultDs = tuple2DataStream.filter(item -> item.f0).map(item -> item.f1);
 
-        TableLoader dwsmember = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dws_member");
+        TableLoader dwsmember = TableLoader.fromHadoopTable(catalogPath + "dws_member");
         FlinkSink.forRowData(resultDs).tableLoader(dwsmember).overwrite(true).build();
 
     }

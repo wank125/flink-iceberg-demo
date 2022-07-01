@@ -11,22 +11,26 @@ import org.apache.iceberg.flink.source.FlinkSource;
 import static org.apache.flink.table.api.Expressions.$;
 
 public class DwdIcebergDao {
+
+    private String basePath = "file:///tmp/warehouse/ods/";
+    private String catalogPath = "file:///tmp/warehouse/iceberg/iceberg/";
+
     public Table getDwdMember(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_member");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "dwd_member");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result);
         return table;
     }
 
     public Table getDwdPcentermempaymoney(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_pcentermempaymoney");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "dwd_pcentermempaymoney");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result);
         return table;
     }
 
     public Table getDwdVipLevel(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_vip_level");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "dwd_vip_level");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result).renameColumns($("start_time").as("vip_start_time"))
                 .renameColumns($("end_time").as("vip_end_time")).renameColumns($("last_modify_time").as("vip_last_modify_time"))
@@ -36,7 +40,7 @@ public class DwdIcebergDao {
     }
 
     public Table getDwdBaseWebsite(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_base_website");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "dwd_base_website");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result).renameColumns($("delete").as("site_delete"))
                 .renameColumns($("createtime").as("site_createtime")).renameColumns($("creator").as("site_creator"));
@@ -44,14 +48,14 @@ public class DwdIcebergDao {
     }
 
     public Table getDwdMemberRegtyp(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_member_regtype");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "dwd_member_regtype");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result).renameColumns($("createtime").as("reg_createtime"));
         return table;
     }
 
     public Table getDwdBaseAd(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv) {
-        TableLoader tableLoader = TableLoader.fromHadoopTable("hdfs://mycluster/flink/warehouse/iceberg/dwd_base_ad");
+        TableLoader tableLoader = TableLoader.fromHadoopTable(catalogPath + "/dwd_base_ad");
         DataStream<RowData> result = FlinkSource.forRowData().env(env).tableLoader(tableLoader).streaming(false).build();
         Table table = tableEnv.fromDataStream(result);
         return table;
